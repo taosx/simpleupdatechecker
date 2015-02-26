@@ -1,32 +1,15 @@
-// ############################################### #
-// Simple Update checker                           #
-//   to be used with Generic Monitor from          #
-//                      xfce4 ArchLinux System     #
-//                                      and packer #
-// ############################################### #
-
-// I make some assumptions here:
-// 1.That you use *packer instead of aur as your aur package manager
-// 2.That your linux system is *password protected
-// 3.Last but not least, that you have installed *nodejs
-
 var exec = require('child_process').exec;
 
-var password = 'yourpassword' // Replace 'yourpassword' with your linux root password
+var password = 'yourpassword'; // Replace 'yourpassword' with your linux root password
 
 // Parse 'packer -Syyuu' output and check if updates
 // are available
 var doScan = function () {
-  exec('echo "' + password + '" | sudo -S packer -Syyuu', function (err, output) {
+  exec('echo "' + password + '"sudo -S packer -Syu', function (err, output) {
     if (err) {
       console.log('There was an error:\n' + err);
     } else {
-
-      var check = function (str) {
-        return output.match(str);
-      }
-
-      if (check('there is nothing to do') !== null && check('local database is up to date') !== null) {
+      if (output.search('/there/g') !== -1 && output.search('/date/g') !== -1) {
         console.log('No updates available');
       } else {
         console.log('Updates available');
@@ -35,8 +18,6 @@ var doScan = function () {
   });
 }
 
-doScan();
+// packer -Syu | grep -w 'Packages ([0-9])' && /Packages (\([0-9]\))/
 
-// I'll probably not continue to add something more to this.
-// It's just a personal script that helps me (I try updating everytime I finish a task on pc).
-// If recommandations are made I'm happy to implement them.
+doScan();
